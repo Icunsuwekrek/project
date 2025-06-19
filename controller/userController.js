@@ -48,17 +48,25 @@ if (existing) {
 }
 
     const user = await prisma.user.create({
-      data: { name, email, phone, password: finalPassword, role },
+      data: {
+        name,
+        email,
+        phone,
+        password: finalPassword,
+        role,
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
     });
 
     // Kirim email ke user
     await sendMail(
       email,
-      'Akun Anda telah dibuat',
+      "Akun Anda telah dibuat",
       `Halo ${name},\n\nAkun Anda berhasil dibuat.\n\nEmail: ${email}\nPassword: ${plainPassword}\n\nSilakan login dan segera ganti password.`
     );
 
-    res.status(201).json(user);
+    res.status(200).json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
