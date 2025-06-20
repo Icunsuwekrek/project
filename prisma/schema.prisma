@@ -13,12 +13,9 @@ model user {
   email      String    @unique(map: "User_email_key")
   phone      String
   password   String
-  role       user_role
+  profile    String?
+  role       String
   created_at DateTime  @default(now())
-  updated_at DateTime
-}
-
-enum user_role {
-  admin
-  user
+  updated_at DateTime?
+  created_by Int? 
 }
