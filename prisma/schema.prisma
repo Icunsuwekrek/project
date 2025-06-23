@@ -8,17 +8,46 @@ datasource db {
 }
 
 model user {
-  id         Int       @id @default(autoincrement())
-  name       String
-  email      String    @unique(map: "User_email_key")
-  phone      String
-  password   String
-  role       user_role
-  created_at DateTime  @default(now())
-  updated_at DateTime
+  id           Int             @id @default(autoincrement())
+  name         String
+  email        String          @unique(map: "User_email_key")
+  phone        String
+  password     String
+  role         user_role
+  created_at   DateTime        @default(now())
+  updated_at   DateTime
+
+  // Relasi ke reservations
+  reservations reservations[]  // <== ini relasi balik dari reservations
 }
 
 enum user_role {
   admin
   user
+}
+
+model Class {
+  id           Int             @id @default(autoincrement())
+  name         String
+  schedule     DateTime?
+  quota        Int?
+  location     String?
+  trainer_name String?
+  description  String?
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @updatedAt
+
+  // Relasi ke reservations
+  reservations reservations[]  // <== ini relasi balik dari reservations
+}
+
+model reservations {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  class_id    Int
+  reserved_at DateTime @default(now())
+
+  // Relasi ke user dan class
+  user        user     @relation(fields: [user_id], references: [id])
+  class       Class    @relation(fields: [class_id], references: [id])
 }

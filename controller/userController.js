@@ -66,7 +66,7 @@ if (existing) {
       `Halo ${name},\n\nAkun Anda berhasil dibuat.\n\nEmail: ${email}\nPassword: ${plainPassword}\n\nSilakan login dan segera ganti password.`
     );
 
-    res.status(200).json(user);
+    res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
