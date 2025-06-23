@@ -11,11 +11,13 @@ const userRoutes = require('./routes/userRoutes');
 const classRoutes = require("./routes/classRoute");
 const resrvRoutes = require("./routes/reservRoute");
 const authRoutes = require('./routes/authRoutes');
+const ticketRoutes = require("./routes/tiketRoutes");
 
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/class", classRoutes);
 app.use("/reserv", resrvRoutes);
+app.use("/tiket", ticketRoutes);
 app.use('/uploads', express.static('uploads'));
 
 const uploadDir = path.join(__dirname, 'uploads');

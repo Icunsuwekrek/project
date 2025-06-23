@@ -64,7 +64,7 @@ exports.createUser = async (req, res) => {
           role: resolvedRole,
           profile: profilePath,
           created_at: new Date(),
-          updated_at: null,
+          updated_at: new Date(),
           created_by: userId,
         },
       });
@@ -90,7 +90,7 @@ exports.createUser = async (req, res) => {
   } catch (err) {
     if (err.message === 'Gagal mengirim email notifikasi') {
       return res.status(500).json({
-        error: 'User gagal dibuat karena pengiriman email gagal. Silakan coba lagi nanti.',
+        error: 'User gagal dibuat karena pengiriman email gagal. Silakan coba lagi nanti.'
       });
     }
 

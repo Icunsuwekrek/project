@@ -1,5 +1,9 @@
 const prisma = require("../prisma/client");
 const { sendMail, templateReserv } = require("../utils/mailer");
+const dateFnsTz = require("date-fns-tz");
+
+const utcToZonedTime = dateFnsTz.toZonedTime;
+const format = dateFnsTz.format;
 
 exports.createReservation = async (req, res) => {
   const { user_id, class_id } = req.body;
@@ -46,9 +50,38 @@ exports.getReservations = async (req, res) => {
       },
     });
 
+    const timeZone = "Asia/Jakarta";
+
+    const reservationsWithLocalTime = reservations.map((reservation) => {
+      const reservedAtZoned = utcToZonedTime(reservation.reserved_at, timeZone);
+
+      // class.schedule bisa nullable, cek dulu
+      let scheduleFormatted = null;
+      if (reservation.class?.schedule) {
+        const scheduleZoned = utcToZonedTime(
+          reservation.class.schedule,
+          timeZone
+        );
+        scheduleFormatted = format(scheduleZoned, "yyyy-MM-dd HH:mm:ss", {
+          timeZone,
+        });
+      }
+
+      return {
+        ...reservation,
+        reserved_at: format(reservedAtZoned, "yyyy-MM-dd HH:mm:ss", {
+          timeZone,
+        }),
+        class: {
+          ...reservation.class,
+          schedule: scheduleFormatted,
+        },
+      };
+    });
+
     res.status(200).json({
       message: "Berhasil mengambil data reservations",
-      data: reservations,
+      data: reservationsWithLocalTime,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

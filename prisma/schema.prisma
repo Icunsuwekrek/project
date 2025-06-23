@@ -13,12 +13,17 @@ model user {
   email        String          @unique(map: "User_email_key")
   phone        String
   password     String
+  profile      String?
   role         user_role
   created_at   DateTime        @default(now())
   updated_at   DateTime
 
   // Relasi ke reservations
-  reservations reservations[]  // <== ini relasi balik dari reservations
+  reservations reservations[]  // relasi ke reservasi
+
+  // Relasi ke tickets
+  assignedTickets Ticket[]     @relation("AssignedTickets")
+  createdTickets  Ticket[]     @relation("CreatedTickets")
 }
 
 enum user_role {
@@ -38,7 +43,7 @@ model Class {
   updated_at   DateTime        @updatedAt
 
   // Relasi ke reservations
-  reservations reservations[]  // <== ini relasi balik dari reservations
+  reservations reservations[]
 }
 
 model reservations {
@@ -47,7 +52,28 @@ model reservations {
   class_id    Int
   reserved_at DateTime @default(now())
 
-  // Relasi ke user dan class
   user        user     @relation(fields: [user_id], references: [id])
   class       Class    @relation(fields: [class_id], references: [id])
+}
+
+model Ticket {
+  id            Int           @id @default(autoincrement())
+  ticket_number String        @unique
+  issue_title   String
+  description   String
+  assigned_to   Int?         
+  created_by    Int
+  status        TicketStatus  @default(open)
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+
+  // Relasi ke user
+  assignedTo    user?         @relation("AssignedTickets", fields: [assigned_to], references: [id])
+  createdBy     user          @relation("CreatedTickets", fields: [created_by], references: [id])
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  closed
 }
