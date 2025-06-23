@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
     res.json({
       message: 'Login berhasil',
       token,
-      // role: user.role,
+      role: user.role,
     });
   } catch (err) {
     res.status(500).json({ error: 'Terjadi kesalahan server' });
