@@ -8,42 +8,15 @@ datasource db {
 }
 
 model user {
-  id           Int             @id @default(autoincrement())
-  name         String
-  email        String          @unique(map: "User_email_key")
-  phone        String
-  password     String
-  profile      String?
-  role         user_role
-  created_at   DateTime        @default(now())
-  updated_at   DateTime
-
-  // Relasi ke reservations
-  reservations reservations[]  // relasi ke reservasi
-
-  // Relasi ke tickets
-  assignedTickets Ticket[]     @relation("AssignedTickets")
-  createdTickets  Ticket[]     @relation("CreatedTickets")
-}
-
-enum user_role {
-  admin
-  user
-}
-
-model Class {
-  id           Int             @id @default(autoincrement())
-  name         String
-  schedule     DateTime?
-  quota        Int?
-  location     String?
-  trainer_name String?
-  description  String?
-  created_at   DateTime        @default(now())
-  updated_at   DateTime        @updatedAt
-
-  // Relasi ke reservations
-  reservations reservations[]
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String    @unique(map: "User_email_key")
+  phone      String
+  password   String
+  profile    String?
+  role       user_role
+  created_at DateTime  @default(now())
+  updated_at DateTime
 }
 
 model reservations {
@@ -52,28 +25,66 @@ model reservations {
   class_id    Int
   reserved_at DateTime @default(now())
 
-  user        user     @relation(fields: [user_id], references: [id])
-  class       Class    @relation(fields: [class_id], references: [id])
+  @@index([class_id], map: "reservations_class_id_fkey")
+  @@index([user_id], map: "reservations_user_id_fkey")
 }
 
-model Ticket {
+/// This model has been renamed to 'Renamedclass' during introspection, because the original name 'class' is reserved.
+model Renamedclass {
+  id           Int       @id @default(autoincrement())
+  name         String
+  schedule     DateTime?
+  quota        Int?
+  location     String?
+  trainer_name String?
+  description  String?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime
+
+  @@map("class")
+}
+
+model ticket {
   id            Int           @id @default(autoincrement())
-  ticket_number String        @unique
+  ticket_number String        @unique(map: "Ticket_ticket_number_key")
   issue_title   String
   description   String
-  assigned_to   Int?         
+  assigned_to   Int?
   created_by    Int
-  status        TicketStatus  @default(open)
+  status        ticket_status @default(open)
   created_at    DateTime      @default(now())
-  updated_at    DateTime      @updatedAt
+  updated_at    DateTime
 
-  // Relasi ke user
-  assignedTo    user?         @relation("AssignedTickets", fields: [assigned_to], references: [id])
-  createdBy     user          @relation("CreatedTickets", fields: [created_by], references: [id])
+  @@index([assigned_to], map: "Ticket_assigned_to_fkey")
+  @@index([created_by], map: "Ticket_created_by_fkey")
 }
 
-enum TicketStatus {
+enum user_role {
+  admin
+  user
+}
+
+enum ticket_status {
   open
   in_progress
   closed
+}
+model Event {
+  id         Int      @id @default(autoincrement())
+  title       String   // VARCHAR
+  description String   // TEXT
+  event_date  DateTime // DATETIME
+  location    String   // VARCHAR
+  created_at  DateTime @default(now())    // TIMESTAMP default sekarang
+  updated_at  DateTime @updatedAt         // TIMESTAMP auto-update saat update
+}
+
+model Banner {
+  id         Int      @id @default(autoincrement())
+  image_url  String   // TEXT
+  title      String   // VARCHAR
+  link       String   // VARCHAR
+  is_active  Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }

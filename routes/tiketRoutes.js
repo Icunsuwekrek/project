@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const tiketController = require('../controller/ticketController');
+const { protect, restrictTo } = require("../middlewares/authMiddleware");
+router.use(protect);
+router.use(restrictTo("admin"));
 
 router.get('/tiket', tiketController.getTickets);
 // router.get('/users/:id', userController.getUser);
