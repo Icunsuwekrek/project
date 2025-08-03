@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 require("dotenv").config();
 const fs = require("fs");
@@ -7,6 +8,12 @@ const path = require("path");
 // Middleware untuk parsing JSON dan URL-encoded
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 // Membuat folder public/uploads jika belum ada
 const uploadDir = path.join(__dirname, "public", "uploads");
@@ -39,7 +46,7 @@ const events = require("events");
 events.defaultMaxListeners = 20;
 
 // Jalankan server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`${process.env.APP_NAME} running at http://localhost:${port}`);
 });
